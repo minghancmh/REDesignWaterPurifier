@@ -1,10 +1,11 @@
 // GPIO Interfacing
 #define BACKWASH_BUTTON 25 
-#define solenoid_1_NO 16
+#define solenoid_1_NO 15
 #define solenoid_2_NO 17
 #define solenoid_3_NC 18
 #define pump_main_NC 21
 #define pump_backwash_NO 22
+#define normal_purification_led 23
 
 // CONST VARS
 #define DEBOUNCE_TIME 50
@@ -30,10 +31,11 @@ void setup() {
   pinMode(solenoid_3_NC, OUTPUT);
   pinMode(pump_main_NC, OUTPUT);
   pinMode(pump_backwash_NO, OUTPUT);
+  pinMode(normal_purification_led, OUTPUT);
 
   // set all pumps to off state (NC/NO logic handled by relay)
-  offMainpump();
-  offBackwashpump();
+  offMainPump();
+  offBackwashPump();
 
   // open all solenoid valves (NC/NO logic handled by relay)
   openSolenoidValve1();
@@ -79,50 +81,53 @@ void loop() {
 
 void backwash(){
   // insert code to do backwash here
-  Serial.println("Backwashing...")
-  Serial.println("120 seconds")
+  Serial.println("Backwashing...");
+  Serial.println("120 seconds");
   offMainPump();
+  digitalWrite(normal_purification_led, LOW);
   closeSolenoidValve1();
   closeSolenoidValve2();
   openSolenoidValve3();
   onBackwashPump();
-  delay(120000);
+  delay(10000); // must edit later for the full backwash cycle
 }
 
 void normalPurification(){
   Serial.println("Normal Purification");
+  
   openSolenoidValve1();
   openSolenoidValve2();
   closeSolenoidValve3();
+  digitalWrite(normal_purification_led, HIGH);
   onMainPump();
   offBackwashPump();
 }
 
 void openSolenoidValve1(){
-  digitalWrite(solenoid_1_NO, LOW);
+  digitalWrite(solenoid_1_NO, HIGH);
 }
 
 
 void closeSolenoidValve1(){
-  digitalWrite(solenoid_1_NO, HIGH);
+  digitalWrite(solenoid_1_NO, LOW);
 }
 
 void openSolenoidValve2(){
-  digitalWrite(solenoid_2_NO, LOW);
+  digitalWrite(solenoid_2_NO, HIGH);
 }
 
 
 void closeSolenoidValve2(){
-  digitalWrite(solenoid_2_NO, HIGH);
+  digitalWrite(solenoid_2_NO, LOW);
 }
 
 void openSolenoidValve3(){
-  digitalWrite(solenoid_3_NC, HIGH);
+  digitalWrite(solenoid_3_NC, LOW);
 }
 
 
 void closeSolenoidValve3(){
-  digitalWrite(solenoid_3_NC, LOW);
+  digitalWrite(solenoid_3_NC, HIGH);
 }
 
 void onMainPump(){
