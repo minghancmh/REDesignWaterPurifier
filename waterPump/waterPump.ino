@@ -83,13 +83,17 @@ void backwash(){
   // insert code to do backwash here
   Serial.println("Backwashing...");
   Serial.println("120 seconds");
-  offMainPump();
   digitalWrite(normal_purification_led, LOW);
-  closeSolenoidValve1();
-  closeSolenoidValve2();
-  openSolenoidValve3();
+  closeSolenoidValve1(); // alternately open and close to create agitation
+  closeSolenoidValve2(); // always close during backwashing
+  openSolenoidValve3(); // always open during backwash
   onBackwashPump();
-  delay(10000); // must edit later for the full backwash cycle
+  for (int i=0; i<10; i++){
+    openSolenoidValve1();
+    delay(5000);
+    closeSolenoidValve1();
+    delay(7000);
+  }
 }
 
 void normalPurification(){
@@ -131,17 +135,17 @@ void closeSolenoidValve3(){
 }
 
 void onMainPump(){
-  digitalWrite(pump_main_NC, LOW);
-}
-
-void offMainPump(){
   digitalWrite(pump_main_NC, HIGH);
 }
 
+void offMainPump(){
+  digitalWrite(pump_main_NC, LOW);
+}
+
 void onBackwashPump(){
-  digitalWrite(pump_backwash_NO, HIGH);
+  digitalWrite(pump_backwash_NO, LOW);
 }
 
 void offBackwashPump(){
-  digitalWrite(pump_backwash_NO, LOW);
+  digitalWrite(pump_backwash_NO, HIGH);
 }
